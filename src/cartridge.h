@@ -5,7 +5,10 @@
 
 class Cartridge {
 public:
-    std::unique_ptr<Mapper> mapper;
-
     Cartridge(const std::string& path);
+
+    Mapper& getMapper() noexcept;
+
+private:
+    std::unique_ptr<Mapper> m_pMapper;
 };

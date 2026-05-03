@@ -1,16 +1,19 @@
+#include "cpu.h"
 #include "bus.h"
 #include "ppu.h"
 #include "mapper.h"
 
+Bus::Bus(Ppu &ppu, Mapper &mapper) : m_Ppu(ppu), m_Mapper(mapper) {}
+
 uint8_t Bus::read(uint16_t addr) {
     if (addr <= 0x1FFF) {
-        return ram[addr & 0x07FF];
+        return m_ram[addr & 0x07FF];
     }
     else if (addr <= 0x3FFF) {
-        return ppu->read(0x2000 + (addr & 7));
+        return m_Ppu.read(0x2000 + (addr & 7));
     }
     else if (addr >= 0x8000) {
-        return mapper->readPRG(addr);
+        return m_Mapper.readPRG(addr);
     }
 
     return 0;
@@ -18,12 +21,12 @@ uint8_t Bus::read(uint16_t addr) {
 
 void Bus::write(uint16_t addr, uint8_t val) {
     if (addr <= 0x1FFF) {
-        ram[addr & 0x07FF] = val;
+        m_ram[addr & 0x07FF] = val;
     }
     else if (addr <= 0x3FFF) {
-        ppu->write(0x2000 + (addr & 7), val);
+        m_Ppu.write(0x2000 + (addr & 7), val);
     }
     else if (addr >= 0x8000) {
-        mapper->writePRG(addr, val);
+        m_Mapper.writePRG(addr, val);
     }
 }

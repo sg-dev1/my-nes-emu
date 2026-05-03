@@ -12,26 +12,18 @@ int main(int argc, char** argv) {
     }
 
     Cartridge cart(argv[1]);
-
-    Bus bus;
-    Cpu cpu;
-    Ppu ppu;
-
-    bus.cpu = &cpu;
-    bus.ppu = &ppu;
-    bus.mapper = cart.mapper.get();
-
-    cpu.bus = &bus;
-    ppu.mapper = cart.mapper.get();
+    Ppu ppu(cart.getMapper());
+    Bus bus(ppu, cart.getMapper());
+    Cpu cpu(bus);
 
     cpu.reset();
 
     while (true) {
         cpu.step();
 
-        for (int i = 0; i < 3; i++) {
-            ppu.step();
-        }
+        ppu.step();
+        ppu.step();
+        ppu.step();
     }
 
     return 0;

@@ -25,5 +25,10 @@ Cartridge::Cartridge(const std::string& path) {
     file.read((char*)chr.data(), chrSize);
 
     // Only Mapper 0 supported
-    mapper = std::make_unique<Mapper0>(prg, chr);
+    m_pMapper = std::make_unique<Mapper0>(prg, chr);
+}
+
+Mapper& Cartridge::getMapper() noexcept
+{
+    return *m_pMapper;
 }
