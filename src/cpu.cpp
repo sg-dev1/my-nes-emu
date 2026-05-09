@@ -29,13 +29,18 @@ uint16_t Cpu::read16(uint16_t addr) {
 }
 
 void Cpu::step() {
-    uint8_t opcode = read(m_Pc++);
+    if (m_Cycles == 0) 
+    {
+        uint8_t opcode = read(m_Pc++);
 
-    const Opcode& op = OPCODES[opcode];
+        const Opcode& op = OPCODES[opcode];
 
-    AddrResult addrResult = (this->*op.addrmode)();
-    (this->*op.instr)(addrResult.addr);
-    m_Cycles += op.cycles + (op.extracCyclesOnPageCross && addrResult.pageCrossed ? 1 : 0);
+        AddrResult addrResult = (this->*op.addrmode)();
+        (this->*op.instr)(addrResult.addr);
+        m_Cycles = op.cycles + (op.extracCyclesOnPageCross && addrResult.pageCrossed ? 1 : 0);
+    }
+
+    m_Cycles--;
 }
 
 void Cpu::setFlag(Cpu::Flag flag, bool value)

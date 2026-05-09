@@ -39,8 +39,10 @@ public:
 private:
     uint16_t m_Pc = 0;
     uint8_t m_A = 0, m_X = 0, m_Y = 0, m_Sp = 0xFD, m_Status = 0x24;
-    // Number of cycles cpu has performed since reset
-    uint64_t m_Cycles = 0;
+    // Number of cycles used for instruction timing (instruction level emulator)
+    // In future emulation could be done on Micro-op level, so each Cpu::step() executes one micro-op,
+    // e.g. decode opcode, fetch low, fetch high, execute, etc.
+    uint8_t m_Cycles = 0;
 
     Bus &m_Bus;
 
