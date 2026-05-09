@@ -13,3 +13,8 @@ add_executable(my_nes_emu
 )
 
 target_include_directories(my_nes_emu PRIVATE src)
+
+target_compile_options(my_nes_emu PRIVATE
+    $<$<CXX_COMPILER_ID:MSVC>:/W4>
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion>
+)
