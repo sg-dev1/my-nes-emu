@@ -1,0 +1,12 @@
+- PPU rendering (e.g. could use SDL3)
+    - pattern table viewer (debug, pattern table 0 and pattern table 1)
+    - nametable viewer (for debug)
+    - full NES screen
+- Controller Input (should be also provided by SDL I guess)
+- Mapper 1 (MMC1)
+
+Future
+- CPU: Support for illegal opcodes
+- Cycle accurate emulation (on micro-opcode level)
+- Audio
+- Other mappers

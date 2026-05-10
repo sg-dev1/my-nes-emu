@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <cstdint>
 
 class Mapper;
@@ -11,6 +12,8 @@ public:
     void cpuWrite(uint16_t addr, uint8_t val);
 
     void step();
+
+    void renderPatternTable(std::array<uint32_t, 128 * 128>& framebuffer, uint16_t patternTableBase);
 
 private:
     uint8_t ppuRead(uint16_t addr);

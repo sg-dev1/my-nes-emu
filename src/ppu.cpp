@@ -128,3 +128,57 @@ uint16_t Ppu::mirrorPaletteAddr(uint16_t addr) const
 void Ppu::step() {
     // TODO: rendering
 }
+
+void Ppu::renderPatternTable(std::array<uint32_t, 128 * 128>& framebuffer, uint16_t patternTableBase) 
+{
+    // 256 tiles total
+    for (int tile = 0; tile < 256; tile++)
+    {
+        // Tile position in 16x16 grid
+        int tileX = tile % 16;
+        int tileY = tile / 16;
+
+        // Each tile is 16 bytes
+        uint16_t tileAddr = patternTableBase + static_cast<uint16_t>(tile * 16);
+
+        // Each tile are 8x8 pixels, (16*8)/64 = 2 bytes per pixel
+        //
+        // 8 rows per tile
+        for (uint8_t row = 0; row < 8; row++) // row = y
+        {
+            // Bytes 0-7   : bitplane 0
+            uint8_t plane0 = ppuRead(tileAddr + row);
+            // Bytes 8-15  : bitplane 1
+            uint8_t plane1 = ppuRead(static_cast<uint16_t>(tileAddr + row + 8U));
+
+            // 8 pixels per row
+            for (int col = 0; col < 8; col++) // col = x
+            {
+                uint8_t bit0 = (plane0 >> (7 - col)) & 1;
+                uint8_t bit1 = (plane1 >> (7 - col)) & 1;
+                uint8_t color = (bit1 << 1) | bit0;
+                // For simplicity use grayscale colors: 0 = black, 1 = dark gray, 2 = light gray, 3 = white
+                uint32_t rgb = 0;
+                switch (color)
+                {
+                    case 0:
+                        rgb = 0xFF000000;
+                        break;
+                    case 1:
+                        rgb = 0xFF555555;
+                        break;
+                    case 2:
+                        rgb = 0xFFAAAAAA;
+                        break;
+                    case 3:
+                        rgb = 0xFFFFFFFF;
+                        break;
+                }
+
+                int screenX = tileX * 8 + col;
+                int screenY =  tileY * 8 + row;
+                framebuffer[static_cast<std::size_t>(screenY * 128 + screenX)] = rgb;
+            }
+        }
+    }
+}

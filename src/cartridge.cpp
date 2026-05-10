@@ -30,6 +30,8 @@ Cartridge::Cartridge(const std::string& path) {
     file.read((char*)header, 16);
 
     unsigned prgSize = header[4] * 16384U;
+    // TODO @0 means the board uses CHR RAM: need to handle this, how large is the RAM then?
+    // ... else it seems to be 1 because it contains pattern table in PPU memory 0x0000–0x1FFF  (8192 bytes)
     unsigned chrSize = header[5] * 8192U;
     uint8_t flags6 = header[6];
     uint8_t flags7 = header[7];
@@ -42,6 +44,11 @@ Cartridge::Cartridge(const std::string& path) {
     if (has_trainer) {
         file.seekg(512, std::ios::cur);
     }
+
+    std::cout << "PRG ROM size: " << prgSize << " bytes\n";
+    std::cout << "CHR ROM size: " << chrSize << " bytes\n";
+    std::cout << "Mapper number: " << (int)mapperNum << "\n";
+    std::cout << "Mirroring: " << (mirroring == Mirroring::Vertical ? "Vertical" : "Horizontal") << "\n";
 
     std::vector<uint8_t> prg(prgSize);
     std::vector<uint8_t> chr(chrSize);
